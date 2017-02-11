@@ -96,8 +96,15 @@ callee
 && callee.object.property.name === 'inject'
 && callee.property.name === 'service'));
 
-const isDefaultValue = ({ value: { type } }) =>
-type === 'Identifier' || type === 'Literal' || type === 'ArrayExpression' || type === 'ConditionalExpression';
+const DEFAULT_TYPES = new Map([
+  ['Identifier', true],
+  ['Literal', true],
+  ['ArrayExpression', true],
+  ['ConditionalExpression', true],
+  ['MemberExpression', true],
+]);
+
+const isDefaultValue = ({ value: { type } }) => DEFAULT_TYPES.has(type);
 
 const isObserver = ({ value: { type, callee: { name, object, property } = {} } }) =>
 type === 'CallExpression'
@@ -138,7 +145,15 @@ const categoriseProps = (node) => {
   };
 };
 
-const byName = (a, b) => {
+const byTypeThenName = (a, b) => {
+  if (ORDER[a.type] > ORDER[b.type]) {
+    return 1;
+  }
+
+  if (ORDER[a.type] < ORDER[b.type]) {
+    return -1;
+  }
+
   if (a.node.key.name > b.node.key.name) {
     return 1;
   }
@@ -150,22 +165,10 @@ const byName = (a, b) => {
   return 0;
 };
 
-const sortByType = (a, b) => {
-  if (ORDER[a.type] > ORDER[b.type]) {
-    return 1;
-  }
-
-  if (ORDER[a.type] < ORDER[b.type]) {
-    return -1;
-  }
-
-  return 0;
-};
-
 const toNode = ({ node }) => node;
 
 const orderProps = props =>
-  props.map(categoriseProps).sort(byName).sort(sortByType).map(toNode);
+  props.map(categoriseProps).sort(byTypeThenName).map(toNode);
 
 const transform = (file, api) => {
   const j = api.jscodeshift;

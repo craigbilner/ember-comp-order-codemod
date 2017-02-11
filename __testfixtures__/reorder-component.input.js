@@ -1,6 +1,7 @@
 import Ember, { Component, computed, inject } from 'ember';
 import mixin from 'someMixin';
 import layout from 'layout';
+import ENUM from 'enum';
 
 const { service } = inject;
 const { alias } = computed;
@@ -45,6 +46,8 @@ export default Component.extend(mixin, {
   didInsertElement() {
     // custom didInsertElement logic
   },
+
+  foo: ENUM.BAR,
 
   baz: Ember.computed.alias('foo.bar'),
 
