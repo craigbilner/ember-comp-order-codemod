@@ -1,24 +1,27 @@
 import Ember, { Component, computed, inject } from 'ember';
 import mixin from 'someMixin';
 import layout from 'layout';
+import ENUM from 'enum';
 
 const { service } = inject;
 const { alias } = computed;
 
 export default Component.extend(mixin, {
-  user: Ember.inject.service('user'),
-
   i18n: service(),
 
-  layout,
+  user: Ember.inject.service('user'),
+
+  animationDelay: Ember.testing ? 10 : 20,
 
   classNameBindings: ['foo.bar', 'bar.baz'],
 
   classNames: ['foo', 'bar'],
 
-  role: 'sloth',
+  foo: ENUM.BAR,
 
-  animationDelay: Ember.testing ? 10 : 20,
+  layout,
+
+  role: 'sloth',
 
   baz: Ember.computed.alias('foo.bar'),
 
